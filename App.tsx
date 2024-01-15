@@ -1,20 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { Camera, CameraType as ExpoCameraType } from 'expo-camera';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
+  const [hasPermission, setHasPermission] = useState(false);
+  const [cameraType, setCameraType] = useState(ExpoCameraType.back);
+  const cameraRef = useRef<Camera>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
+  function flipCamera() {
+    setCameraType(cameraType === ExpoCameraType.back ? ExpoCameraType.front : ExpoCameraType.back)
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1 }}>
+      <Camera style={{ flex: 1 }} ref={cameraRef} type={cameraType}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            paddingTop: 45,
+            paddingRight: 15,
+          }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'gray',
+              borderRadius: 50,
+              padding: 10,
+            }}
+            onPress={flipCamera}>
+            <Ionicons name="camera-reverse-outline" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      </Camera>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
