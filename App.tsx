@@ -35,7 +35,7 @@ export default function App() {
     const formData = new FormData()
     formData.append('file', image as any)
 
-    fetch('http://192.168.1.69:8000/predict-image/', {
+    fetch('http://192.168.1.69:8000/predict/', {
       method: 'POST',
       body: formData,
     })
