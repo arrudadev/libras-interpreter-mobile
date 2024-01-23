@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native'
-import { Camera, CameraType as ExpoCameraType } from 'expo-camera'
+import { Camera } from 'expo-camera'
 import { Ionicons } from '@expo/vector-icons'
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false)
-  const [cameraType, setCameraType] = useState(ExpoCameraType.back)
   const [signal, setSignal] = useState('')
   const [loading, setLoading] = useState(false)
   const cameraRef = useRef<Camera>(null)
@@ -13,14 +12,6 @@ export default function App() {
   async function requestCameraPermission() {
     const { status } = await Camera.requestCameraPermissionsAsync()
     setHasPermission(status === 'granted')
-  }
-
-  function flipCamera() {
-    setCameraType(
-      cameraType === ExpoCameraType.back
-        ? ExpoCameraType.front
-        : ExpoCameraType.back,
-    )
   }
 
   async function handleTakePicture() {
@@ -70,7 +61,7 @@ export default function App() {
   return (
     <>
       <View style={{ flex: 1 }}>
-        <Camera style={{ flex: 1 }} ref={cameraRef} type={cameraType}>
+        <Camera style={{ flex: 1 }} ref={cameraRef}>
           <View
             style={{
               flexDirection: 'row',
@@ -90,10 +81,6 @@ export default function App() {
             >
               Libras Interpreter
             </Text>
-
-            <TouchableOpacity onPress={flipCamera}>
-              <Ionicons name="camera-reverse-outline" size={24} color="white" />
-            </TouchableOpacity>
           </View>
 
           {signal && (
